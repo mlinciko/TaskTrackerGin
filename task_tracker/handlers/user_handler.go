@@ -4,8 +4,9 @@ import (
 	"fmt"
 	requests "gin/task_tracker/handlers/dtos/request"
 	user_errors "gin/task_tracker/handlers/errors"
+	i_handlers "gin/task_tracker/handlers/interfaces"
 	"gin/task_tracker/models"
-	"gin/task_tracker/repositories"
+	i_services "gin/task_tracker/services/interfaces"
 	"gin/task_tracker/utils"
 	"net/http"
 	"strconv"
@@ -13,7 +14,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateUserHandler(c *gin.Context) {
+type userHandler struct {
+	service i_services.UserService
+}
+
+func NewUserHandler(service i_services.UserService) i_handlers.UserHandler {
+	return &userHandler{service}
+}
+
+func (h *userHandler) CreateUserHandler(c *gin.Context) {
 	var request requests.CreateUserRequestDto
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, utils.MakeResp(nil, http.StatusBadRequest, err.Error()))
@@ -22,7 +31,7 @@ func CreateUserHandler(c *gin.Context) {
 
 	user := models.User{FirstName: request.FirstName}
 
-	if err := repositories.CreateUser(&user); err != nil {
+	if err := h.service.CreateUser(&user); err != nil {
 		c.JSON(http.StatusInternalServerError, utils.MakeResp(nil, http.StatusInternalServerError, err.Error()))
 		return
 	}
@@ -30,7 +39,7 @@ func CreateUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.MakeResp(user, http.StatusOK, ""))
 }
 
-func GetUserHandler(c *gin.Context) {
+func (h *userHandler) GetUserHandler(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -38,7 +47,7 @@ func GetUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := repositories.GetUserByID(uint(id))
+	user, err := h.service.GetUserByID(uint(id))
 	if err != nil {
 		errMessage := fmt.Sprintf(user_errors.UserNotFound, id)
 		c.JSON(http.StatusNotFound, utils.MakeResp(nil, http.StatusNotFound, errMessage))
@@ -48,7 +57,7 @@ func GetUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.MakeResp(user, http.StatusOK, ""))
 }
 
-func PutUserHandler(c *gin.Context) {
+func (h *userHandler) PutUserHandler(c *gin.Context) {
 	var request requests.PutUserRequestDto
 	if err := c.ShouldBind(&request); err == nil {
 		errMessage := fmt.Sprintf(user_errors.InvalidRequestBody, utils.GetFieldNames(requests.PutUserRequestDto{}))
@@ -63,7 +72,7 @@ func PutUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := repositories.GetUserByID(uint(id))
+	user, err := h.service.GetUserByID(uint(id))
 	if err != nil {
 		errMessage := fmt.Sprintf(user_errors.UserNotFound, id)
 		c.JSON(http.StatusNotFound, utils.MakeResp(nil, http.StatusNotFound, errMessage))
@@ -72,7 +81,7 @@ func PutUserHandler(c *gin.Context) {
 
 	user.FirstName = request.FirstName
 
-	user, err = repositories.UpdateUser(user)
+	user, err = h.service.UpdateUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.MakeResp(nil, http.StatusInternalServerError, err.Error()))
 		return
@@ -81,7 +90,7 @@ func PutUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.MakeResp(user, http.StatusOK, ""))
 }
 
-func PatchUserHandler(c *gin.Context) {
+func (h *userHandler) PatchUserHandler(c *gin.Context) {
 	var request requests.PatchUserRequestDto
 	if err := c.ShouldBind(&request); err == nil {
 		errMessage := fmt.Sprintf(user_errors.InvalidRequestBody, utils.GetFieldNames(requests.PatchUserRequestDto{}))
@@ -96,7 +105,7 @@ func PatchUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := repositories.GetUserByID(uint(id))
+	user, err := h.service.GetUserByID(uint(id))
 	if err != nil {
 		errMessage := fmt.Sprintf(user_errors.UserNotFound, id)
 		c.JSON(http.StatusNotFound, utils.MakeResp(nil, http.StatusNotFound, errMessage))
@@ -107,7 +116,7 @@ func PatchUserHandler(c *gin.Context) {
 		user.FirstName = request.FirstName
 	}
 
-	user, err = repositories.UpdateUser(user)
+	user, err = h.service.UpdateUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.MakeResp(nil, http.StatusInternalServerError, err.Error()))
 		return
@@ -116,7 +125,7 @@ func PatchUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.MakeResp(user, http.StatusOK, ""))
 }
 
-func DeleteUserHandler(c *gin.Context) {
+func (h *userHandler) DeleteUserHandler(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
@@ -124,14 +133,14 @@ func DeleteUserHandler(c *gin.Context) {
 		return
 	}
 
-	user, err := repositories.GetUserByID(uint(id))
+	user, err := h.service.GetUserByID(uint(id))
 	if err != nil {
 		errMessage := fmt.Sprintf(user_errors.UserNotFound, id)
 		c.JSON(http.StatusNotFound, utils.MakeResp(nil, http.StatusNotFound, errMessage))
 		return
 	}
 
-	err = repositories.DeleteUser(user)
+	err = h.service.DeleteUser(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.MakeResp(nil, http.StatusInternalServerError, err.Error()))
 		return
@@ -140,7 +149,7 @@ func DeleteUserHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, utils.MakeResp(user, http.StatusOK, ""))
 }
 
-func GetAllUsersHandler(c *gin.Context) {
+func (h *userHandler) GetAllUsersHandler(c *gin.Context) {
 	var request requests.GetAllUsersRequestDto
 	if err := c.ShouldBind(&request); err == nil {
 		errMessage := fmt.Sprintf(user_errors.InvalidRequestBody, utils.GetFieldNames(requests.GetAllUsersRequestDto{}))
@@ -148,7 +157,7 @@ func GetAllUsersHandler(c *gin.Context) {
 		return
 	}
 
-	users, err := repositories.GetAllUsers(request)
+	users, err := h.service.GetAllUsers(request)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, utils.MakeResp(nil, http.StatusInternalServerError, err.Error()))
 		return

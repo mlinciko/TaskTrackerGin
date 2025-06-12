@@ -1,17 +1,24 @@
 package routes
 
 import (
+	"gin/task_tracker/database"
 	"gin/task_tracker/handlers"
+	"gin/task_tracker/repositories"
+	"gin/task_tracker/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func SetupUserGroup(router *gin.Engine) {
+	repo := repositories.NewUserRepository(database.DB)
+	service := services.NewUserService(repo)
+	handler := handlers.NewUserHandler(service)
+
 	userGroup := router.Group("/users")
-	userGroup.POST("", handlers.CreateUserHandler)
-	userGroup.GET("/:id", handlers.GetUserHandler)
-	userGroup.PUT("/:id", handlers.PutUserHandler)
-	userGroup.PATCH("/:id", handlers.PatchUserHandler)
-	userGroup.DELETE("/:id", handlers.DeleteUserHandler)
-	userGroup.GET("/employees", handlers.GetAllUsersHandler)
+	userGroup.POST("", handler.CreateUserHandler)
+	userGroup.GET("/:id", handler.GetUserHandler)
+	userGroup.PUT("/:id", handler.PutUserHandler)
+	userGroup.PATCH("/:id", handler.PatchUserHandler)
+	userGroup.DELETE("/:id", handler.DeleteUserHandler)
+	userGroup.GET("/employees", handler.GetAllUsersHandler)
 }
