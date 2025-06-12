@@ -1,9 +1,8 @@
 package repositories
 
 import (
-	"fmt"
+	xerrors "gin/task_tracker/errors"
 	requests "gin/task_tracker/handlers/dtos/request"
-	"gin/task_tracker/handlers/errors"
 	"gin/task_tracker/models"
 	i_repositories "gin/task_tracker/repositories/interfaces"
 
@@ -42,7 +41,7 @@ func (r *userRepository) UpdateUser(user *models.User) (*models.User, error) {
 	}
 
 	if tx.RowsAffected == 0 {
-		return nil, fmt.Errorf(errors.ZeroRowsAffected, "UpdateUser")
+		return nil, xerrors.ErrZeroRowsAffected
 	}
 
 	user, err := r.GetUserByID(user.ID)

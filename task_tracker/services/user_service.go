@@ -12,7 +12,7 @@ type userService struct {
 }
 
 func NewUserService(repo i_repositories.UserRepository) i_services.UserService {
-	return &userService{}
+	return &userService{repo}
 }
 
 func (s *userService) CreateUser(user *models.User) error {
