@@ -6,6 +6,7 @@ import (
 	"gin/task_tracker/config"
 	"gin/task_tracker/database"
 	"gin/task_tracker/routes"
+	"gin/task_tracker/validators"
 
 	"github.com/gin-gonic/gin"
 )
@@ -79,6 +80,9 @@ func main() {
 	dsn := config.AppConfig.GetPostgresDSN()
 	database.Connect(dsn)
 	database.Migrate()
+
+	//Регистрируем валидаторы
+	validators.RegisterValidators()
 
 	//Определяем роуты
 	r := gin.Default()

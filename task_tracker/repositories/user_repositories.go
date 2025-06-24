@@ -34,7 +34,7 @@ func (r *userRepository) GetAllUsers(filter requests.GetAllUsersRequestDto) ([]*
 }
 
 func (r *userRepository) UpdateUser(user *models.User) (*models.User, error) {
-	tx := r.db.Model(&user).Updates(models.User{FirstName: user.FirstName})
+	tx := r.db.Model(&user).Updates(models.User{FirstName: user.FirstName, Email: user.Email})
 
 	if tx.Error != nil {
 		return nil, tx.Error

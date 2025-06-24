@@ -23,12 +23,12 @@ func NewUserHandler(service i_services.UserService) i_handlers.UserHandler {
 
 func (h *userHandler) CreateUserHandler(c *gin.Context) {
 	var request requests.CreateUserRequestDto
-	if err := c.ShouldBindJSON(&request); err != nil {
+	if err := c.ShouldBind(&request); err != nil {
 		c.Error(err).SetMeta(http.StatusBadRequest)
 		return
 	}
 
-	user := models.User{FirstName: request.FirstName}
+	user := models.User{FirstName: request.FirstName, Email: request.Email}
 
 	if err := h.service.CreateUser(&user); err != nil {
 		c.Error(err).SetMeta(http.StatusInternalServerError)
@@ -76,6 +76,7 @@ func (h *userHandler) PutUserHandler(c *gin.Context) {
 	}
 
 	user.FirstName = request.FirstName
+	user.Email = request.Email
 
 	user, err = h.service.UpdateUser(user)
 	if err != nil {
@@ -108,6 +109,10 @@ func (h *userHandler) PatchUserHandler(c *gin.Context) {
 
 	if request.FirstName != "" {
 		user.FirstName = request.FirstName
+	}
+
+	if request.Email != "" {
+		user.Email = request.Email
 	}
 
 	user, err = h.service.UpdateUser(user)
@@ -144,7 +149,7 @@ func (h *userHandler) DeleteUserHandler(c *gin.Context) {
 
 func (h *userHandler) GetAllUsersHandler(c *gin.Context) {
 	var request requests.GetAllUsersRequestDto
-	if err := c.ShouldBind(&request); err == nil {
+	if err := c.ShouldBind(&request); err != nil {
 		c.Error(err).SetMeta(http.StatusBadRequest)
 		return
 	}

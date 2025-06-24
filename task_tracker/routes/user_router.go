@@ -20,5 +20,5 @@ func SetupUserGroup(router *gin.Engine) {
 	userGroup.PUT("/:id", handler.PutUserHandler)
 	userGroup.PATCH("/:id", handler.PatchUserHandler)
 	userGroup.DELETE("/:id", handler.DeleteUserHandler)
-	userGroup.GET("/employees", handler.GetAllUsersHandler)
+	userGroup.GET("/all", handler.GetAllUsersHandler)
 }
