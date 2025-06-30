@@ -49,3 +49,10 @@ func (c *Config) GetPostgresDSN() string {
 		c.DBHost, c.DBPort, c.DBUser, c.DBPassword, c.DBName,
 	)
 }
+
+func (c *Config) GetTestPostgresDSN() string {
+	return fmt.Sprintf(
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		c.DBHost, c.DBPort, c.DBUser, c.DBPassword, c.DBName+"_test",
+	)
+}

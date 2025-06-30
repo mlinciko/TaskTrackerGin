@@ -7,6 +7,10 @@ import (
 )
 
 func SetupRoutes(router *gin.Engine) {
-	router.Use(middleware.ErrorHandler())
+	SetupMiddleware(router)
 	SetupUserGroup(router)
+}
+
+func SetupMiddleware(router *gin.Engine) {
+	router.Use(middleware.ErrorHandler())
 }

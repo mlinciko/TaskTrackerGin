@@ -7,6 +7,8 @@ import (
 	"gin/task_tracker/services"
 
 	"github.com/gin-gonic/gin"
+
+	i_handlers "gin/task_tracker/handlers/interfaces"
 )
 
 func SetupUserGroup(router *gin.Engine) {
@@ -14,6 +16,10 @@ func SetupUserGroup(router *gin.Engine) {
 	service := services.NewUserService(repo)
 	handler := handlers.NewUserHandler(service)
 
+	SetUsersRoutes(router, handler)
+}
+
+func SetUsersRoutes(router *gin.Engine, handler i_handlers.UserHandler) {
 	userGroup := router.Group("/users")
 	userGroup.POST("", handler.CreateUserHandler)
 	userGroup.GET("/:id", handler.GetUserHandler)
