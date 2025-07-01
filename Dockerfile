@@ -6,9 +6,9 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY ./task_tracker ./task_tracker
+COPY ./ ./
 
-RUN go build -o ./bin/task_tracker ./task_tracker
+RUN go build -o ./bin/task_tracker ./cmd
 
 # Финальный образ
 FROM alpine:latest
@@ -20,7 +20,7 @@ RUN apk --no-cache add ca-certificates
 
 # Копируем собранный бинарник и .env файл
 COPY --from=builder /app/bin/task_tracker .
-COPY task_tracker/.env .
+COPY config/.env .
 
 # Устанавливаем переменные окружения из файла
 #ENV $(cat .env | xargs)

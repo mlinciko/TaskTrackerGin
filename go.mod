@@ -1,4 +1,4 @@
-module gin
+module github.com/mlinciko/TaskTrackerGin
 
 go 1.23.1
 
