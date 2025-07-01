@@ -20,7 +20,7 @@ var AppConfig *Config
 
 func LoadConfig() {
 	// Загружаем .env файл, если есть
-	err := godotenv.Load()
+	err := godotenv.Load("config/.env")
 	if err != nil {
 		log.Println("No .env file found, reading config from environment variables")
 	}

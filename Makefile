@@ -1,11 +1,11 @@
 APP_NAME=task_tracker
 DB_CONTAINER_NAME=postgres
 
-.PHONY: run build docker docker-run db-start db-stop db-clean migrate
+.PHONY: run build test migrate docker-build docker-run docker-compose-build
 
 # Server cmd commands (for local use)
 run:
-	set -a; source config/.env.dev; set +a; go run cmd/main.go
+	set -a; source config/.env; set +a; go run cmd/main.go
 
 build:
 	mkdir -p ./bin
@@ -22,19 +22,15 @@ docker-build:
 	docker build -t $(APP_NAME) .
 
 docker-run:
-	docker run --env-file config/.env -p 8080:8080 $(APP_NAME)
+	docker run --env-file config/.env.prod -p 8080:8080 $(APP_NAME)
 
 # Run server and DB with docker-compose
-# db-start:
-# 	docker run --name $(DB_CONTAINER_NAME) \
-# 		--env-file .env \
-# 		-p $$(grep DB_PORT .env | cut -d '=' -f2):5432 \
-# 		-d postgres:15
+docker-compose-build:
+	docker compose --env-file config/.env.prod build
 
-# db-stop:
-# 	docker stop $(DB_CONTAINER_NAME) || true
-# 	docker rm $(DB_CONTAINER_NAME) || true
-
-# db-clean: db-stop
-# 	docker volume prune -f
+docker-compose-up:
+	docker compose --env-file config/.env.prod up
+	
+docker-compose-down:
+	docker compose --env-file config/.env.prod down -v
 
