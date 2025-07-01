@@ -20,10 +20,7 @@ RUN apk --no-cache add ca-certificates
 
 # Копируем собранный бинарник и .env файл
 COPY --from=builder /app/bin/task_tracker .
-COPY config/.env .
-
-# Устанавливаем переменные окружения из файла
-#ENV $(cat .env | xargs)
+COPY config/.env.prod ./config/.env
 
 # Запуск приложения
 CMD ["./task_tracker"]
