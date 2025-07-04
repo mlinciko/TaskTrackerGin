@@ -29,7 +29,7 @@ func (h *userHandler) CreateUserHandler(c *gin.Context) {
 		return
 	}
 
-	user := models.User{FirstName: request.FirstName, Email: request.Email}
+	user := models.User{FirstName: request.FirstName, Email: request.Email, Password: request.Password}
 
 	if err := h.service.CreateUser(&user); err != nil {
 		c.Error(err).SetMeta(http.StatusInternalServerError)

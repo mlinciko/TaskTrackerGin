@@ -11,4 +11,5 @@ type UserRepository interface {
 	GetAllUsers(filter requests.GetAllUsersRequestDto) ([]*models.User, error)
 	UpdateUser(user *models.User) (*models.User, error)
 	DeleteUser(user *models.User) error
+	GetUserByEmail(email string) (*models.User, error)
 }

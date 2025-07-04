@@ -8,6 +8,7 @@ RUN go mod download
 
 COPY ./ ./
 
+# Build the project
 RUN go build -o ./bin/task_tracker ./cmd
 
 # Финальный образ

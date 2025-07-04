@@ -9,6 +9,7 @@ import (
 func SetupRoutes(router *gin.Engine) {
 	SetupMiddleware(router)
 	SetupUserGroup(router)
+	SetupAuthGroup(router)
 }
 
 func SetupMiddleware(router *gin.Engine) {
