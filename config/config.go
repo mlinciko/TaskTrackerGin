@@ -9,11 +9,12 @@ import (
 )
 
 type Config struct {
-	DBHost     string
-	DBPort     string
-	DBUser     string
-	DBPassword string
-	DBName     string
+	DBHost       string
+	DBPort       string
+	DBUser       string
+	DBPassword   string
+	DBName       string
+	JWTSecretKey string
 }
 
 var AppConfig *Config
@@ -26,11 +27,12 @@ func LoadConfig() {
 	}
 
 	AppConfig = &Config{
-		DBHost:     getEnv("DB_HOST", "localhost"),
-		DBPort:     getEnv("DB_PORT", "5432"),
-		DBUser:     getEnv("DB_USER", "postgres"),
-		DBPassword: getEnv("DB_PASSWORD", "mlinciko"),
-		DBName:     getEnv("DB_NAME", "postgres"),
+		DBHost:       getEnv("DB_HOST", "localhost"),
+		DBPort:       getEnv("DB_PORT", "5432"),
+		DBUser:       getEnv("DB_USER", "postgres"),
+		DBPassword:   getEnv("DB_PASSWORD", "mlinciko"),
+		DBName:       getEnv("DB_NAME", "postgres"),
+		JWTSecretKey: getEnv("JWT_SECRET", ""),
 	}
 }
 

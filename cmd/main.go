@@ -5,12 +5,14 @@ import (
 	"github.com/mlinciko/TaskTrackerGin/config"
 	"github.com/mlinciko/TaskTrackerGin/internal/database"
 	"github.com/mlinciko/TaskTrackerGin/internal/routes"
+	jwt_utils "github.com/mlinciko/TaskTrackerGin/internal/utils/jwt"
 	"github.com/mlinciko/TaskTrackerGin/internal/validators"
 )
 
-var db = make(map[string]string)
-
 func main() {
+	// Generate JWT secret key
+	jwt_utils.GenerateAndSaveJWTSecretKey()
+
 	// Load config
 	config.LoadConfig()
 

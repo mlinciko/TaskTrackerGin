@@ -56,3 +56,9 @@ func (r *userRepository) UpdateUser(user *models.User) (*models.User, error) {
 func (r *userRepository) DeleteUser(user *models.User) error {
 	return r.db.Delete(&user).Error
 }
+
+func (r *userRepository) GetUserByEmail(email string) (*models.User, error) {
+	var user models.User
+	err := r.db.Where(models.User{Email: email}).First(&user).Error
+	return &user, err
+}

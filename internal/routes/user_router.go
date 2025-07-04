@@ -3,6 +3,7 @@ package routes
 import (
 	"github.com/mlinciko/TaskTrackerGin/internal/database"
 	"github.com/mlinciko/TaskTrackerGin/internal/handlers"
+	"github.com/mlinciko/TaskTrackerGin/internal/middleware"
 	"github.com/mlinciko/TaskTrackerGin/internal/repositories"
 	"github.com/mlinciko/TaskTrackerGin/internal/services"
 
@@ -22,9 +23,11 @@ func SetupUserGroup(router *gin.Engine) {
 func SetUsersRoutes(router *gin.Engine, handler i_handlers.UserHandler) {
 	userGroup := router.Group("/users")
 	userGroup.POST("", handler.CreateUserHandler)
-	userGroup.GET("/:id", handler.GetUserHandler)
-	userGroup.PUT("/:id", handler.PutUserHandler)
-	userGroup.PATCH("/:id", handler.PatchUserHandler)
-	userGroup.DELETE("/:id", handler.DeleteUserHandler)
-	userGroup.GET("/all", handler.GetAllUsersHandler)
+
+	userGroupProtected := userGroup.Use(middleware.VerifyAccess())
+	userGroupProtected.GET("/:id", handler.GetUserHandler)
+	userGroupProtected.PUT("/:id", handler.PutUserHandler)
+	userGroupProtected.PATCH("/:id", handler.PatchUserHandler)
+	userGroupProtected.DELETE("/:id", handler.DeleteUserHandler)
+	userGroupProtected.GET("/all", handler.GetAllUsersHandler)
 }

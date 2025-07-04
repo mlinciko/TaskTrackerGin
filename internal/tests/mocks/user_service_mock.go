@@ -54,3 +54,14 @@ func (m *MockUserService) DeleteUser(user *models.User) error {
 	args := m.Called(user)
 	return args.Error(0)
 }
+
+func (m *MockUserService) GetUserByEmail(email string) (*models.User, error) {
+	args := m.Called(email)
+
+	user, ok := args.Get(0).(*models.User)
+	if !ok && args.Get(0) != nil {
+		panic("expected *models.User as first return value")
+	}
+
+	return user, args.Error(1)
+}
